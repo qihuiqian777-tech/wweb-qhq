@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>快递查询 - 文创市集</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+        }
+
+        /* 顶部导航 */
+        .header {
+            background-color: #fff;
+            padding: 15px 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .header-title {
+            font-size: clamp(18px, 5vw, 22px);
+            font-weight: 600;
+            color: #2d2d2d;
+            text-align: center;
+        }
+
+        /* 快递查询模块 */
+        .search-section {
+            background-color: #fff;
+            margin: 15px;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .search-title {
+            font-size: clamp(16px, 4vw, 18px);
+            margin-bottom: 15px;
+            color: #444;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .express-input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 1px solid #e5e5e5;
+            border-radius: 8px;
+            font-size: clamp(14px, 3.5vw, 16px);
+            outline: none;
+        }
+
+        .express-input:focus {
+            border-color: #ff9a9e;
+        }
+
+        .search-btn {
+            padding: 0 20px;
+            background-color: #ff9a9e;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: clamp(14px, 3.5vw, 16px);
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .search-btn:active {
+            background-color: #ff7a7f;
+        }
+
+        /* 物流状态展示 */
+        .logistics-section {
+            background-color: #fff;
+            margin: 0 15px 15px;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            display: none; /* 默认隐藏，查询后显示 */
+        }
+
+        .logistics-title {
+            font-size: clamp(16px, 4vw, 18px);
+            margin-bottom: 15px;
+            color: #444;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logistics-title::before {
+            content: "";
+            display: inline-block;
+            width: 4px;
+            height: 18px;
+            background-color: #ff9a9e;
+            border-radius: 2px;
+        }
+
+        .logistics-list {
+            list-style: none;
+        }
+
+        .logistics-item {
+            padding: 12px 0;
+            border-bottom: 1px solid #f5f5f5;
+            display: flex;
+            gap: 10px;
+        }
+
+        .logistics-item:last-child {
+            border-bottom: none;
+        }
+
+        .logistics-dot {
+            width: 10px;
+            height: 10px;
+            background-color: #ff9a9e;
+            border-radius: 50%;
+            margin-top: 5px;
+            flex-shrink: 0;
+        }
+
+        .logistics-content {
+            flex: 1;
+        }
+
+        .logistics-time {
+            font-size: clamp(12px, 3vw, 14px);
+            color: #999;
+            margin-bottom: 5px;
+        }
+
+        .logistics-desc {
+            font-size: clamp(14px, 3.5vw, 16px);
+            color: #666;
+        }
+
+        /* 常见问题 */
+        .faq-section {
+            background-color: #fff;
+            margin: 0 15px;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .faq-title {
+            font-size: clamp(16px, 4vw, 18px);
+            margin-bottom: 15px;
+            color: #444;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .faq-title::before {
+            content: "";
+            display: inline-block;
+            width: 4px;
+            height: 18px;
+            background-color: #ff9a9e;
+            border-radius: 2px;
+        }
+
+        .faq-list {
+            list-style: none;
+        }
+
+        .faq-item {
+            margin-bottom: 12px;
+        }
+
+        .faq-question {
+            font-size: clamp(14px, 3.5vw, 16px);
+            color: #444;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        .faq-answer {
+            font-size: clamp(13px, 3vw, 14px);
+            color: #666;
+            line-height: 1.6;
+            padding-left: 10px;
+        }
+
+        /* 底部版权 */
+        .footer {
+            margin-top: 20px;
+            padding: 20px;
+            text-align: center;
+            font-size: clamp(12px, 3vw, 14px);
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航 -->
+    <div class="header">
+        <div class="header-title">快递查询</div>
+    </div>
+
+    <!-- 快递查询模块 -->
+    <div class="search-section">
+        <div class="search-title">输入快递单号查询</div>
+        <div class="input-group">
+            <input type="text" class="express-input" id="expressNo" placeholder="请输入快递单号">
+            <button class="search-btn" id="searchBtn">查询</button>
+        </div>
+    </div>
+
+    <!-- 物流状态展示 -->
+    <div class="logistics-section" id="logisticsSection">
+        <div class="logistics-title">物流状态</div>
+        <ul class="logistics-list">
+            <li class="logistics-item">
+                <div class="logistics-dot"></div>
+                <div class="logistics-content">
+                    <div class="logistics-time">2025-12-18 18:30:25</div>
+                    <div class="logistics-desc">【签收成功】您的快递已由本人签收，签收地址：文创市集自提点</div>
+                </div>
+            </li>
+            <li class="logistics-item">
+                <div class="logistics-dot"></div>
+                <div class="logistics-content">
+                    <div class="logistics-time">2025-12-18 16:20:10</div>
+                    <div class="logistics-desc">【派送中】快递员正在派送，预计1小时内送达</div>
+                </div>
+            </li>
+            <li class="logistics-item">
+                <div class="logistics-dot"></div>
+                <div class="logistics-content">
+                    <div class="logistics-time">2025-12-18 10:15:45</div>
+                    <div class="logistics-desc">【已到达】快递已到达文创市集配送站</div>
+                </div>
+            </li>
+        </ul>
+    </div>
+
+    <!-- 常见问题 -->
+    <div class="faq-section">
+        <div class="faq-title">常见问题</div>
+        <ul class="faq-list">
+            <li class="faq-item">
+                <div class="faq-question">Q：快递单号在哪里查看？</div>
+                <div class="faq-answer">A：下单成功后，会收到包含快递单号的短信通知，也可在订单详情页查看。</div>
+            </li>
+            <li class="faq-item">
+                <div class="faq-question">Q：快递多久能送达？</div>
+                <div class="faq-answer">A：文创市集周边地区一般1-2天送达，其他地区3-5天，具体以物流信息为准。</div>
+            </li>
+            <li class="faq-item">
+                <div class="faq-question">Q：快递丢失/破损怎么办？</div>
+                <div class="faq-answer">A：请及时联系客服，提供快递单号和相关证明，我们会尽快为您处理。</div>
+            </li>
+        </ul>
+    </div>
+
+    <!-- 底部版权 -->
+    <div class="footer">
+        © 2025 文创市集 版权所有
+    </div>
+
+    <script>
+        // 模拟快递查询功能
+        const searchBtn = document.getElementById('searchBtn');
+        const logisticsSection = document.getElementById('logisticsSection');
+        const expressNo = document.getElementById('expressNo');
+
+        searchBtn.addEventListener('click', function() {
+            // 简单验证：单号不为空则显示物流信息
+            if (expressNo.value.trim() !== '') {
+                logisticsSection.style.display = 'block';
+                // 滚动到物流信息区域
+                logisticsSection.scrollIntoView({ behavior: 'smooth' });
+            } else {
+                alert('请输入快递单号');
+            }
+        });
+
+        // 支持回车查询
+        expressNo.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                searchBtn.click();
+            }
+        });
+    </script>
+</body>
+</html>
